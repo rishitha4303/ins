@@ -1,0 +1,25 @@
+import random
+
+def is_prime(n):
+    if n < 2: return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0: return False
+    return True
+
+q = int(input('Enter a prime number (q): '))
+if not is_prime(q):
+    print(f"{q} is not a prime number. Please enter a prime number.")
+else:
+    a = int(input('Enter a primitive root (a) modulo q: '))
+
+    xa = random.randint(1, q - 1)
+    xb = random.randint(1, q - 1)
+
+    ya = pow(a, xa, q)
+    yb = pow(a, xb, q)
+
+    if pow(yb, xa, q) == pow(ya, xb, q):
+        print('Shared secret successfully established!')
+        print(f'Shared secret: {pow(yb, xa, q)}')
+    else:
+        print('Shared secret establishment failed.')

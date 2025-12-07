@@ -1,0 +1,70 @@
+import numpy as np
+
+# 2x2 key matrix
+key = np.array([[3, 3],
+                [2, 5]])
+
+def encrypt(text):
+    text = text.upper().replace(" ", "")
+    
+    # pad if odd length
+    if len(text) % 2 != 0:
+        text += 'X'
+
+    result = ""
+
+    # process 2 letters at a time
+    for k in range(0, len(text), 2):
+        pair = text[k:k+2]
+
+        # convert letters to numbers
+        p0 = ord(pair[0]) - 65
+        p1 = ord(pair[1]) - 65
+
+        # apply matrix multiplication
+        c0 = (key[0][0] * p0 + key[0][1] * p1) % 26
+        c1 = (key[1][0] * p0 + key[1][1] * p1) % 26
+
+        # convert back to letters
+        result += chr(c0 + 65)
+        result += chr(c1 + 65)
+
+    return result
+
+
+def decrypt(text):
+    det = int(round(np.linalg.det(key))) % 26
+    inv_det = pow(det, -1, 26)
+
+    # inverse key matrix
+    inv_key = (inv_det * np.array([
+        [key[1][1], -key[0][1]],
+        [-key[1][0], key[0][0]]
+    ])) % 26
+
+    result = ""
+
+    for k in range(0, len(text), 2):
+        pair = text[k:k+2]
+
+        c0 = ord(pair[0]) - 65
+        c1 = ord(pair[1]) - 65
+
+        # multiply with inverse matrix
+        p0 = (inv_key[0][0] * c0 + inv_key[0][1] * c1) % 26
+        p1 = (inv_key[1][0] * c0 + inv_key[1][1] * c1) % 26
+
+        result += chr(p0 + 65)
+        result += chr(p1 + 65)
+
+    return result
+
+
+# ----------- run -----------
+msg = input("Enter text: ")
+enc = encrypt(msg)
+dec = decrypt(enc)
+
+print("Plaintext:", msg)
+print("Encrypted:", enc)
+print("Decrypted:", dec)

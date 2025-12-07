@@ -1,0 +1,18 @@
+sudo apt update
+sudo apt install openssl libssl-dev -y
+
+openssl genpkey -algorithm RSA -out myprivate.key -pkeyopt rsa_keygen_bits:2048
+
+openssl req -new -key myprivate.key -out myrequest.csr
+
+openssl x509 -req -days 365 -in myrequest.csr -signkey myprivate.key -out mycertificate.crt
+
+openssl req -text -noout -verify -in myrequest.csr
+
+mkdir -p demoCA/newcerts
+touch demoCA/index.txt
+echo 1000 > demoCA/serial
+
+ openssl ca -config /usr/lib/ssl/openssl.cnf -revoke mycertificate.crt -keyfile ca_key.pem -cert ca_cert.pem
+
+ rm myrequest.csr

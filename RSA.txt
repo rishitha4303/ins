@@ -1,0 +1,13 @@
+import math
+p,q=map(int,input('enter p q').split())
+n=p*q
+phi=(p-1)*(q-1)
+for i in range(2,phi):
+    if math.gcd(phi,i)==1:
+        e=i
+        break
+d=pow(e,-1,phi)
+m=int(input('enter msg'))
+c=pow(m,e,n)
+print(c)
+print(pow(c,d,n))

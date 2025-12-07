@@ -1,0 +1,30 @@
+# To implement encryption and decryption using the Rail Fence Transposition Technique.
+
+def encrypt_rail_fence(text):
+    if len(text) < 1:
+        return "Input must be at least 1 character long."
+
+    even_chars = text[::2]
+    odd_chars = text[1::2]
+    return even_chars + odd_chars
+
+def decrypt_rail_fence(ciphertext):
+    half = (len(ciphertext) + 1) // 2
+    even_part = ciphertext[:half]
+    odd_part = ciphertext[half:]
+
+    decrypted = ""
+    for i in range(len(ciphertext)):
+        if i % 2 == 0:
+            decrypted += even_part[i // 2]
+        else:
+            decrypted += odd_part[i // 2]
+    return decrypted
+
+plaintext = input("Enter a message: ")
+encrypted = encrypt_rail_fence(plaintext)
+decrypted = decrypt_rail_fence(encrypted)
+
+print("Input Message  :", plaintext)
+print("Encrypted Text :", encrypted)
+print("Decrypted Text :", decrypted)

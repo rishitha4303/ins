@@ -1,0 +1,63 @@
+# Simple Playfair Cipher with user-defined key
+
+def generate_key_square(key):
+    key = key.upper().replace("J","I").replace(" ","")
+    square = []
+    for c in key + "ABCDEFGHIKLMNOPQRSTUVWXYZ":
+        if c not in square:
+            square.append(c)
+    return [square[i:i+5] for i in range(0,25,5)]
+
+def find_pos(c, square):
+    for r,row in enumerate(square):
+        if c in row:
+            return r, row.index(c)
+
+def preprocess(text):
+    text = text.upper().replace("J","I").replace(" ","")
+    if len(text)%2 !=0:
+        text += "X"
+    return text
+
+def encrypt(text, square):
+    text = preprocess(text)
+    cipher = ""
+    for i in range(0,len(text),2):
+        a,b = text[i],text[i+1]
+        r1,c1 = find_pos(a,square)
+        r2,c2 = find_pos(b,square)
+        if r1==r2:
+            cipher += square[r1][(c1+1)%5] + square[r2][(c2+1)%5]
+        elif c1==c2:
+            cipher += square[(r1+1)%5][c1] + square[(r2+1)%5][c2]
+        else:
+            cipher += square[r1][c2] + square[r2][c1]
+    return cipher
+
+def decrypt(cipher, square):
+    text = ""
+    for i in range(0,len(cipher),2):
+        a,b = cipher[i],cipher[i+1]
+        r1,c1 = find_pos(a,square)
+        r2,c2 = find_pos(b,square)
+        if r1==r2:
+            text += square[r1][(c1-1)%5] + square[r2][(c2-1)%5]
+        elif c1==c2:
+            text += square[(r1-1)%5][c1] + square[(r2-1)%5][c2]
+        else:
+            text += square[r1][c2] + square[r2][c1]
+    return text
+
+# Usage
+key = input("Enter key: ")
+msg = input("Enter message: ")
+square = generate_key_square(key)
+enc = encrypt(msg,square)
+dec = decrypt(enc,square)
+
+print("Key Square:")
+for row in square:
+    print(row)
+print("Plaintext :", msg)
+print("Encrypted :", enc)
+print("Decrypted :", dec)
