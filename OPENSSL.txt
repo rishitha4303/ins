@@ -15,4 +15,73 @@ echo 1000 > demoCA/serial
 
  openssl ca -config /usr/lib/ssl/openssl.cnf -revoke mycertificate.crt -keyfile ca_key.pem -cert ca_cert.pem
 
+
  rm myrequest.csr
+
+
+
+sure rishitha, here are **only the commands**, clean and ready to run:
+
+---
+
+## **🔥 OpenSSL CA → CSR → Certificate → Revoke (Commands Only)**
+
+```bash
+sudo apt remove openssl
+sudo apt-get install openssl
+openssl version
+```
+
+### **1. Create CA folders**
+
+```bash
+mkdir -p demoCA/newcerts demoCA/private
+touch demoCA/index.txt
+echo 1000 > demoCA/serial
+```
+
+### **2. Generate CA private key**
+
+```bash
+openssl genrsa -out demoCA/private/cakey.pem 2048
+```
+
+### **3. Create self-signed CA certificate**
+
+```bash
+openssl req -x509 -new -key demoCA/private/cakey.pem -out demoCA/cacert.pem -days 365
+```
+
+### **4. Generate server private key**
+
+```bash
+openssl genrsa -out server.key 2048
+```
+
+### **5. Create CSR**
+
+```bash
+openssl req -new -key server.key -out server.csr
+```
+
+### **6. Sign CSR with CA**
+
+```bash
+openssl x509 -req -in server.csr -CA demoCA/cacert.pem -CAkey demoCA/private/cakey.pem -CAcreateserial -out server.crt -days 365
+```
+
+### **7. Verify certificate**
+
+```bash
+openssl verify -CAfile demoCA/cacert.pem server.crt
+```
+
+### **8. Revoke certificate**
+
+```bash
+openssl ca -revoke server.crt -keyfile demoCA/private/cakey.pem -cert demoCA/cacert.pem
+```
+
+---
+
+if you want, I can also give you the **CRL generation commands** too, rishitha.
